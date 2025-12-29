@@ -1,0 +1,17 @@
+# ================= FRONTEND =================
+node_modules/
+dist/
+.vite/
+
+# ================= BACKEND =================
+target/
+*.log
+
+# ================= IDE / SYSTEM =================
+.metadata/
+.DS_Store
+Thumbs.db
+
+# ================= ENV =================
+.env
+.env.local
