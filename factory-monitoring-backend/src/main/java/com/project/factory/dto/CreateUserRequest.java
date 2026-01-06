@@ -9,35 +9,46 @@ public class CreateUserRequest {
     private Role role;
     private boolean active = true;
 
+    /* ================= GETTERS ================= */
+
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Role getRole() {
         return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     public boolean isActive() {
         return active;
     }
 
+    /* ================= SETTERS ================= */
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    /* ================= HELPER (OPTIONAL) ================= */
+
+    // ✅ Can be used later if validation is moved here
+    public boolean isGmailUsername() {
+        return username != null && username.toLowerCase().endsWith("@gmail.com");
     }
 }

@@ -109,6 +109,7 @@ const styles = {
     padding: "20px",
     boxSizing: "border-box",
     boxShadow: "4px 0 20px rgba(0,0,0,0.25)",
+    overflow: "hidden", // ✅ prevents outer scrollbar
   },
 
   /* BRAND */
@@ -164,6 +165,10 @@ const styles = {
     gap: "8px",
     flex: 1,
     overflowY: "auto",
+
+    /* ✅ HIDE SCROLLBAR (but keep scroll) */
+    scrollbarWidth: "none",       // Firefox
+    msOverflowStyle: "none",      // IE/Edge
   },
 
   /* LOGOUT */
@@ -183,13 +188,16 @@ const styles = {
   },
 };
 
+/* ✅ Hide scrollbar for Chrome / Safari */
 const linkStyle = (active) => ({
   padding: "10px 14px",
   borderRadius: "8px",
   color: "#e5e7eb",
   textDecoration: "none",
   fontSize: "14px",
-  background: active ? "linear-gradient(135deg, #2563eb, #4f46e5)" : "transparent",
+  background: active
+    ? "linear-gradient(135deg, #2563eb, #4f46e5)"
+    : "transparent",
   fontWeight: active ? "600" : "500",
 });
 

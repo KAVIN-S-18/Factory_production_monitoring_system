@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.project.factory.model.Role;
 import com.project.factory.model.User;
 import com.project.factory.repository.UserRepository;
 
@@ -53,10 +52,10 @@ public class UserService {
     }
 
     /* =====================================================
-       LOGIN LOGIC
+       LOGIN LOGIC (ROLE REMOVED)
        ===================================================== */
 
-    public Optional<User> login(String username, String password, Role role) {
+    public Optional<User> login(String username, String password) {
 
         Optional<User> userOpt = userRepository.findByUsername(username);
 
@@ -76,11 +75,7 @@ public class UserService {
             return Optional.empty();
         }
 
-        // Check role matches selected role
-        if (user.getRole() != role) {
-            return Optional.empty();
-        }
-
+        // ✅ ROLE IS DERIVED FROM DB (NO CHECK HERE)
         return Optional.of(user);
     }
 }

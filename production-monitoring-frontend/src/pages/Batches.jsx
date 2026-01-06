@@ -586,6 +586,9 @@ const styles = {
     borderRadius: "12px",
     overflowX: "auto",
     boxShadow: "0 8px 20px rgba(0,0,0,0.06)",
+
+    scrollbarWidth: "none",       // Firefox
+    msOverflowStyle: "none",  
   },
 
   table: {
@@ -713,6 +716,10 @@ const styles = {
     padding: "24px",
     borderRadius: "14px",
     width: "520px",
+    maxHeight: "90vh",
+    overflowY: "auto",
+    scrollbarWidth: "none",
+    msOverflowStyle: "none",
   },
 
   field: {
@@ -728,6 +735,5 @@ const styles = {
     gap: "10px",
   },
 };
-
 
 export default Batches;

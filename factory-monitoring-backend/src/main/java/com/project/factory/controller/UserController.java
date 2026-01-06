@@ -11,7 +11,6 @@ import com.project.factory.dto.CreateUserRequest;
 import com.project.factory.dto.LoginRequest;
 import com.project.factory.dto.LoginResponse;
 import com.project.factory.dto.UpdatePasswordRequest;
-import com.project.factory.model.Role;
 import com.project.factory.model.User;
 import com.project.factory.model.UserLoginLog;
 import com.project.factory.service.UserService;
@@ -25,7 +24,6 @@ public class UserController {
     private final UserService userService;
     private final UserLoginLogService userLoginLogService;
 
-    // ✅ Constructor injection
     public UserController(
             UserService userService,
             UserLoginLogService userLoginLogService
@@ -46,10 +44,22 @@ public class UserController {
     @PostMapping("/users")
     public User createUser(@RequestBody CreateUserRequest request) {
 
+        /* ✅ PASSWORD CHECK */
         if (request.getPassword() == null || request.getPassword().isBlank()) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "Password is required"
+            );
+        }
+
+        /* ✅ USERNAME CHECK */
+        if (
+            request.getUsername() == null ||
+            !request.getUsername().toLowerCase().endsWith("@gmail.com")
+        ) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Username must be a valid Gmail address"
             );
         }
 
@@ -87,32 +97,21 @@ public class UserController {
     }
 
     /* =====================================================
-       LOGIN
+       LOGIN (ROLE REMOVED)
        ===================================================== */
 
     @PostMapping("/auth/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
 
-        Role role;
-        try {
-            role = Role.valueOf(request.getRole().toUpperCase());
-        } catch (Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid role"
-            );
-        }
-
         Optional<User> user = userService.login(
                 request.getUsername(),
-                request.getPassword(),
-                role
+                request.getPassword()
         );
 
         if (user.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    "Invalid username, password, or role"
+                    "Invalid username or password"
             );
         }
 
@@ -142,13 +141,11 @@ public class UserController {
        LOGIN LOGS (ADMIN)
        ===================================================== */
 
-    // ✅ FRONTEND TABLE USES THIS
     @GetMapping("/login-logs")
     public List<UserLoginLog> getAllLoginLogs() {
         return userLoginLogService.getAllLogs();
     }
 
-    // ✅ ONE-TIME CLEANUP
     @DeleteMapping("/login-logs")
     public void deleteAllLoginLogs() {
         userLoginLogService.clearAllLogs();

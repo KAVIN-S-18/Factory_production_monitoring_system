@@ -6,7 +6,6 @@ function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [role, setRole] = useState("ADMIN");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -19,10 +18,10 @@ function Login() {
       return;
     }
 
-    const success = await login(username, password, role);
+    const success = await login(username, password);
 
     if (!success) {
-      alert("Invalid username, password, or role");
+      alert("Invalid username or password");
       return;
     }
 
@@ -47,20 +46,6 @@ function Login() {
         <div style={styles.rightPanel}>
           <p style={styles.greeting}>Hello 👋</p>
           <h3 style={styles.loginTitle}>Login Your Account</h3>
-
-          {/* ROLE */}
-          <div style={styles.field}>
-            <label style={styles.label}>Role</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              style={styles.input}
-            >
-              <option value="ADMIN">Admin</option>
-              <option value="SUPERVISOR">Supervisor</option>
-              <option value="OPERATOR">Operator</option>
-            </select>
-          </div>
 
           {/* USERNAME */}
           <div style={styles.field}>

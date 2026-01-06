@@ -44,12 +44,22 @@ function Users() {
   /* =====================================================
      ADD USER
      ===================================================== */
-  const handleAddUser = async () => {
-    if (!username || !password) {
-      alert("All fields required");
-      return;
-    }
+  /* =====================================================
+   ADD USER (GMAIL VALIDATION + ERROR HANDLING)
+   ===================================================== */
+const handleAddUser = async () => {
+  if (!username || !password) {
+    alert("All fields required");
+    return;
+  }
 
+  // ✅ FRONTEND GMAIL VALIDATION
+  if (!username.endsWith("@gmail.com")) {
+    alert("Username must end with @gmail.com");
+    return;
+  }
+
+  try {
     await addUser({
       username,
       password,
@@ -57,9 +67,21 @@ function Users() {
       active: true,
     });
 
-    setShowForm(false);
+    alert("User created successfully");
+
+    setShowForm(false);   // ✅ close ONLY on success
     setUserPage(0);
-  };
+
+  } catch (err) {
+    console.error(err);
+
+    alert(
+      err?.response?.data?.message ||
+      "Failed to create user"
+    );
+  }
+};
+
 
   /* =====================================================
      UPDATE PASSWORD

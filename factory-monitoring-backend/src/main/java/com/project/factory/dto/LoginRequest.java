@@ -4,7 +4,6 @@ public class LoginRequest {
 
     private String username;
     private String password;
-    private String role;
 
     // ===== GETTERS =====
 
@@ -16,10 +15,6 @@ public class LoginRequest {
         return password;
     }
 
-    public String getRole() {
-        return role;
-    }
-
     // ===== SETTERS =====
 
     public void setUsername(String username) {
@@ -28,9 +23,5 @@ public class LoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }

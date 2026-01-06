@@ -24,12 +24,11 @@ export function AuthProvider({ children }) {
   /* =====================================================
      LOGIN (BACKEND INTEGRATED)
      ===================================================== */
-  const login = async (username, password, role) => {
+  const login = async (username, password) => {
     try {
       const res = await api.post("/auth/login", {
         username,
         password,
-        role,
       });
 
       const loggedUser = res.data;
