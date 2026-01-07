@@ -51,15 +51,24 @@ export function AuthProvider({ children }) {
   };
 
   /* =====================================================
-     LOGOUT (FRONTEND ONLY — TEMP)
+     LOGOUT (BACKEND + FRONTEND)
      ===================================================== */
-  const logout = () => {
-    // ✅ CLOSE FRONTEND LOGIN LOG
-    closeLoginLog();
-
-    // ✅ CLEAR SESSION
-    setUser(null);
-    localStorage.removeItem("user");
+  const logout = async () => {
+    try {
+      if (user?.username) {
+        // ✅ BACKEND LOGOUT (UPDATE DB)
+        await api.post("/auth/logout", {
+          username: user.username,
+        });
+      }
+    } catch (err) {
+      console.error("Logout API failed:", err);
+    } finally {
+      // ✅ FRONTEND CLEANUP (ALWAYS)
+      closeLoginLog();
+      setUser(null);
+      localStorage.removeItem("user");
+    }
   };
 
   return (

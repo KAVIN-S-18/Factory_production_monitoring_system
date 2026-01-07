@@ -2,6 +2,7 @@ package com.project.factory.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -126,11 +127,12 @@ public class UserController {
     }
 
     /* =====================================================
-       LOGOUT
+       LOGOUT  ✅ FIXED
        ===================================================== */
 
     @PostMapping("/auth/logout")
-    public void logout(@RequestParam String username) {
+    public void logout(@RequestBody Map<String, String> body) {
+        String username = body.get("username");
         userLoginLogService.recordLogout(username);
     }
 
