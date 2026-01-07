@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/production-logs")
-@CrossOrigin
+//@CrossOrigin
 public class ProductionLogController {
 
     private final ProductionLogService service;
