@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
+import api from "../services/api";
 
 const PAGE_SIZE = 5;
-const API_BASE = "http://localhost:8081/api/production-logs";
 
 function Reports() {
   /* ---------- DATA ---------- */
@@ -12,10 +12,6 @@ function Reports() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
-  /* ---------- APPLIED FILTER STATES ---------- */
-  const [appliedFrom, setAppliedFrom] = useState("");
-  const [appliedTo, setAppliedTo] = useState("");
-
   /* ---------- PAGINATION ---------- */
   const [page, setPage] = useState(0);
 
@@ -25,20 +21,15 @@ function Reports() {
   const fetchReports = async (from, to) => {
     setLoading(true);
 
-    let url = `${API_BASE}/reports`;
-    const params = [];
-
-    if (from) params.push(`from=${from}`);
-    if (to) params.push(`to=${to}`);
-
-    if (params.length) {
-      url += `?${params.join("&")}`;
-    }
-
     try {
-      const res = await fetch(url);
-      const data = await res.json();
-      setLogs(data);
+      const res = await api.get("/production-logs/reports", {
+        params: {
+          from,
+          to,
+        },
+      });
+
+      setLogs(res.data);
       setPage(0);
     } catch (err) {
       console.error("Failed to load production reports", err);
@@ -55,8 +46,6 @@ function Reports() {
 
   /* ---------- APPLY FILTER ---------- */
   const applyFilter = () => {
-    setAppliedFrom(fromDate);
-    setAppliedTo(toDate);
     fetchReports(fromDate, toDate);
   };
 
@@ -176,9 +165,8 @@ function Reports() {
   );
 }
 
-/* ================= STYLES (MATCH BATCH TABLE) ================= */
+/* ================= STYLES ================= */
 const styles = {
-  /* ---------- FILTER ---------- */
   filterBox: {
     display: "flex",
     gap: "14px",
@@ -210,8 +198,6 @@ const styles = {
     fontWeight: "600",
     fontSize: "13px",
   },
-
-  /* ---------- TABLE ---------- */
   tableWrap: {
     background: "#ffffff",
     borderRadius: "5px",
@@ -221,7 +207,7 @@ const styles = {
   },
   table: {
     width: "100%",
-    borderCollapse: "collapse", // ✅ flat table
+    borderCollapse: "collapse",
     fontSize: "12.5px",
   },
   th: {
@@ -232,17 +218,12 @@ const styles = {
     background: "#f8fafc",
     color: "#334155",
     borderBottom: "1px solid #e2e8f0",
-    whiteSpace: "nowrap",
   },
   td: {
     padding: "8px 10px",
     fontSize: "12.5px",
     color: "#334155",
-    //borderBottom: "1px solid #f1f5f9",
-    lineHeight: "18px",
   },
-
-  /* ---------- PAGINATION ---------- */
   pagination: {
     marginTop: "14px",
     display: "flex",
