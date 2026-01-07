@@ -8,7 +8,8 @@ export function BatchProvider({ children }) {
   const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { addAlert } = useAlerts();
+  const alertsContext = useAlerts();
+  const addAlert = alertsContext?.addAlert; // ✅ SAFE ACCESS
 
   /* =====================================================
      LOAD BATCHES (BACKEND)
@@ -30,7 +31,7 @@ export function BatchProvider({ children }) {
   }, []);
 
   /* =====================================================
-     ADD BATCH (BACKEND AUTHORITATIVE)
+     ADD BATCH
      ===================================================== */
   const addBatch = async (batch) => {
     try {
@@ -55,8 +56,7 @@ export function BatchProvider({ children }) {
   };
 
   /* =====================================================
-     UPDATE BATCH (SCHEDULED ONLY)
-     (re-create pattern – backend enforced)
+     UPDATE BATCH
      ===================================================== */
   const updateBatch = async (updated) => {
     try {
@@ -80,7 +80,7 @@ export function BatchProvider({ children }) {
   };
 
   /* =====================================================
-     DELETE BATCH (SCHEDULED ONLY)
+     DELETE BATCH
      ===================================================== */
   const deleteBatch = async (batchId) => {
     try {
@@ -92,43 +92,37 @@ export function BatchProvider({ children }) {
   };
 
   /* =====================================================
-     START / RESUME
+     START / PAUSE / COMPLETE
      ===================================================== */
   const startBatch = async (batchId) => {
     try {
       await api.put(`/batches/${batchId}/start`);
       await fetchBatches();
-    } catch (err) {
+    } catch {
       alert("Failed to start batch");
     }
   };
 
-  /* =====================================================
-     PAUSE
-     ===================================================== */
   const pauseBatch = async (batchId) => {
     try {
       await api.put(`/batches/${batchId}/pause`);
       await fetchBatches();
-    } catch (err) {
+    } catch {
       alert("Failed to pause batch");
     }
   };
 
-  /* =====================================================
-     COMPLETE
-     ===================================================== */
   const completeBatch = async (batchId) => {
     try {
       await api.put(`/batches/${batchId}/complete`);
       await fetchBatches();
-    } catch (err) {
+    } catch {
       alert("Failed to complete batch");
     }
   };
 
   /* =====================================================
-     FAIL BATCH (OPERATOR / MACHINE)
+     FAIL BATCH
      ===================================================== */
   const failBatch = async (batchId, reason = "") => {
     try {
@@ -137,7 +131,9 @@ export function BatchProvider({ children }) {
       });
 
       const failed = batches.find((b) => b.id === batchId);
-      if (failed) {
+
+      // ✅ SAFE ALERT CALL (ONLY IF EXISTS)
+      if (failed && typeof addAlert === "function") {
         addAlert({
           type: "MACHINE_FAILURE",
           severity: "HIGH",
@@ -147,13 +143,13 @@ export function BatchProvider({ children }) {
       }
 
       await fetchBatches();
-    } catch (err) {
+    } catch {
       alert("Failed to fail batch");
     }
   };
 
   /* =====================================================
-     FAIL BATCH BY MACHINE (REQUIRED BY MachineList)
+     FAIL BATCH BY MACHINE
      ===================================================== */
   const failBatchByMachine = (machineName) => {
     batches.forEach((b) => {
@@ -167,7 +163,7 @@ export function BatchProvider({ children }) {
   };
 
   /* =====================================================
-     CHECK ACTIVE BATCH (UI HELPER)
+     CHECK ACTIVE BATCH
      ===================================================== */
   const hasActiveBatch = (machineName) =>
     batches.some(
@@ -181,7 +177,6 @@ export function BatchProvider({ children }) {
       value={{
         batches,
         loading,
-
         addBatch,
         updateBatch,
         deleteBatch,

@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import api from "../services/api";
 
 const ProductionLogContext = createContext();
-
-const API_BASE = "http://localhost:8081/api/production-logs";
 
 export function ProductionLogProvider({ children }) {
   const [logs, setLogs] = useState([]);
@@ -14,20 +13,15 @@ export function ProductionLogProvider({ children }) {
   const fetchReports = async (from, to) => {
     setLoading(true);
 
-    let url = `${API_BASE}/reports`;
-    const params = [];
-
-    if (from) params.push(`from=${from}`);
-    if (to) params.push(`to=${to}`);
-
-    if (params.length) {
-      url += `?${params.join("&")}`;
-    }
-
     try {
-      const res = await fetch(url);
-      const data = await res.json();
-      setLogs(data);
+      const res = await api.get("/production-logs/reports", {
+        params: {
+          ...(from && { from }),
+          ...(to && { to }),
+        },
+      });
+
+      setLogs(res.data);
     } catch (err) {
       console.error("Failed to fetch production logs", err);
       setLogs([]);

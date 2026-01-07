@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import api from "../services/api";
 
 const MachineContext = createContext();
 
@@ -12,11 +13,6 @@ export const MACHINE_STATUS = {
   ERROR: "ERROR",
 };
 
-/* =========================
-   API BASE
-   ========================= */
-const API_BASE = "http://localhost:8081/api/machines";
-
 export function MachineProvider({ children }) {
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -25,24 +21,21 @@ export function MachineProvider({ children }) {
      LOAD MACHINES (ON START)
      ========================= */
   useEffect(() => {
-  fetchMachines();
+    fetchMachines();
 
-  const refresh = () => fetchMachines();
+    const refresh = () => fetchMachines();
+    window.addEventListener("refresh-machines", refresh);
 
-  window.addEventListener("refresh-machines", refresh);
-
-  return () => {
-    window.removeEventListener("refresh-machines", refresh);
-  };
-}, []);
-
+    return () => {
+      window.removeEventListener("refresh-machines", refresh);
+    };
+  }, []);
 
   const fetchMachines = async () => {
     setLoading(true);
     try {
-      const res = await fetch(API_BASE);
-      const data = await res.json();
-      setMachines(data);
+      const res = await api.get("/machines");
+      setMachines(res.data);
     } catch (err) {
       console.error("Failed to load machines", err);
     } finally {
@@ -56,14 +49,8 @@ export function MachineProvider({ children }) {
      ========================= */
   const addMachine = async (machine) => {
     try {
-      const res = await fetch(API_BASE, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(machine),
-      });
-
-      const saved = await res.json();
-      setMachines((prev) => [...prev, saved]);
+      const res = await api.post("/machines", machine);
+      setMachines((prev) => [...prev, res.data]);
     } catch (err) {
       console.error("Add machine failed", err);
     }
@@ -75,21 +62,14 @@ export function MachineProvider({ children }) {
   const updateMachine = async (updated) => {
     try {
       // 1️⃣ Update core fields
-      await fetch(`${API_BASE}/${updated.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updated),
-      });
+      await api.put(`/machines/${updated.id}`, updated);
 
       // 2️⃣ If status changed → call status API
       if (updated.status) {
-        await fetch(
-          `${API_BASE}/${updated.id}/status/${updated.status}`,
-          { method: "PUT" }
-        );
+        await api.put(`/machines/${updated.id}/status/${updated.status}`);
       }
 
-      fetchMachines(); // refresh state
+      fetchMachines();
     } catch (err) {
       console.error("Update machine failed", err);
     }
@@ -100,10 +80,7 @@ export function MachineProvider({ children }) {
      ========================= */
   const deleteMachine = async (id) => {
     try {
-      await fetch(`${API_BASE}/${id}`, {
-        method: "DELETE",
-      });
-
+      await api.delete(`/machines/${id}`);
       setMachines((prev) => prev.filter((m) => m.id !== id));
     } catch (err) {
       console.error("Delete machine failed", err);
@@ -115,12 +92,8 @@ export function MachineProvider({ children }) {
      ========================= */
   const updateMachineStatus = async (id, status) => {
     try {
-      const res = await fetch(
-        `${API_BASE}/${id}/status/${status}`,
-        { method: "PUT" }
-      );
-
-      const updated = await res.json();
+      const res = await api.put(`/machines/${id}/status/${status}`);
+      const updated = res.data;
 
       setMachines((prev) =>
         prev.map((m) => (m.id === updated.id ? updated : m))

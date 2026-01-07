@@ -10,7 +10,7 @@ import com.project.factory.service.SupplierService;
 
 @RestController
 @RequestMapping("/api/suppliers")
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
 public class SupplierController {
 
     private final SupplierService supplierService;

@@ -5,10 +5,9 @@ import {
   useState,
   useCallback,
 } from "react";
+import api from "../services/api";
 
 const AlertContext = createContext();
-
-const API_URL = "http://localhost:8081/api/alerts";
 
 export function AlertProvider({ children }) {
   const [alerts, setAlerts] = useState([]);
@@ -20,11 +19,10 @@ export function AlertProvider({ children }) {
   const fetchAlerts = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(API_URL);
-      const data = await res.json();
+      const res = await api.get("/alerts");
 
       // Backend already sorts by time desc
-      setAlerts(data);
+      setAlerts(res.data);
     } catch (err) {
       console.error("Failed to fetch alerts", err);
     } finally {
@@ -44,7 +42,7 @@ export function AlertProvider({ children }) {
      ===================================================== */
   const clearAlerts = async () => {
     try {
-      await fetch(API_URL, { method: "DELETE" });
+      await api.delete("/alerts");
       setAlerts([]);
     } catch (err) {
       console.error("Failed to clear alerts", err);
@@ -55,21 +53,18 @@ export function AlertProvider({ children }) {
      RESOLVE ONE ALERT
      ===================================================== */
   const resolveAlert = async (alertId) => {
-  try {
-    await fetch(`${API_URL}/${alertId}/resolve`, {
-      method: "PUT",
-    });
+    try {
+      await api.put(`/alerts/${alertId}/resolve`);
 
-    // remove alert locally
-    setAlerts((prev) => prev.filter((a) => a.id !== alertId));
+      // remove alert locally
+      setAlerts((prev) => prev.filter((a) => a.id !== alertId));
 
-    // 🔥 FORCE machine refresh
-    window.dispatchEvent(new Event("refresh-machines"));
-  } catch (err) {
-    console.error("Failed to resolve alert", err);
-  }
-};
-
+      // 🔥 FORCE machine refresh
+      window.dispatchEvent(new Event("refresh-machines"));
+    } catch (err) {
+      console.error("Failed to resolve alert", err);
+    }
+  };
 
   /* =====================================================
      REFRESH ALERTS MANUALLY (OPTIONAL)

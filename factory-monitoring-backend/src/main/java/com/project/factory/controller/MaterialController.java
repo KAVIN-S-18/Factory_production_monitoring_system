@@ -9,7 +9,7 @@ import com.project.factory.service.MaterialService;
 
 @RestController
 @RequestMapping("/api/materials")
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
 public class MaterialController {
 
     private final MaterialService materialService;
