@@ -19,8 +19,7 @@ public class CorsConfig {
                                 "https://*.vercel.app"
                         )
                         .allowedMethods("*")
-                        .allowedHeaders("*")
-                        .allowCredentials(false);
+                        .allowedHeaders("*");
             }
         };
     }

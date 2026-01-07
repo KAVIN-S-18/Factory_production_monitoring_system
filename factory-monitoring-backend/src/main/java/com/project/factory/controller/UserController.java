@@ -18,7 +18,6 @@ import com.project.factory.service.UserLoginLogService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
 
     private final UserService userService;
@@ -44,7 +43,6 @@ public class UserController {
     @PostMapping("/users")
     public User createUser(@RequestBody CreateUserRequest request) {
 
-        /* ✅ PASSWORD CHECK */
         if (request.getPassword() == null || request.getPassword().isBlank()) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
@@ -52,7 +50,6 @@ public class UserController {
             );
         }
 
-        /* ✅ USERNAME CHECK */
         if (
             request.getUsername() == null ||
             !request.getUsername().toLowerCase().endsWith("@gmail.com")
@@ -97,7 +94,7 @@ public class UserController {
     }
 
     /* =====================================================
-       LOGIN (ROLE REMOVED)
+       LOGIN
        ===================================================== */
 
     @PostMapping("/auth/login")
