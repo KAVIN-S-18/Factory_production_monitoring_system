@@ -16,13 +16,11 @@ public class CorsConfig {
                 registry.addMapping("/api/**")
                         .allowedOriginPatterns(
                                 "http://localhost:5173",
-                                "https://factory-production-monitoring-syste.vercel.app",
                                 "https://*.vercel.app"
                         )
                         .allowedMethods("*")
                         .allowedHeaders("*")
-                        .allowCredentials(false)
-                        .maxAge(3600);
+                        .allowCredentials(false);
             }
         };
     }
