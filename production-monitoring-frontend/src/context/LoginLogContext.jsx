@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import api from "../services/api";
 
 const LoginLogContext = createContext();
@@ -9,11 +15,10 @@ export function LoginLogProvider({ children }) {
   /* =====================================================
      FETCH LOGS FROM BACKEND (DB → FRONTEND)
      ===================================================== */
-  const fetchLoginLogs = async () => {
+  const fetchLoginLogs = useCallback(async () => {
     try {
       const res = await api.get("/login-logs");
 
-      // Normalize backend data to frontend format
       const logs = res.data.map((l) => ({
         id: l.id,
         username: l.username,
@@ -28,23 +33,22 @@ export function LoginLogProvider({ children }) {
     } catch (err) {
       console.error("Failed to fetch login logs", err);
     }
-  };
+  }, []);
 
   /* =====================================================
      LOAD LOGS ON APP START
      ===================================================== */
   useEffect(() => {
     fetchLoginLogs();
-  }, []);
+  }, [fetchLoginLogs]);
 
   /* =====================================================
-     KEEP EXISTING FUNCTIONS (NOT REMOVED)
+     TEMP FRONTEND LOGIN LOG (UNTIL BACKEND SUPPORTS IT)
      ===================================================== */
-
   const addLoginLog = (log) => {
     setLoginLogs((prev) => [
       {
-        id: Date.now(),
+        id: `temp-${Date.now()}`,
         ...log,
         logoutTime: null,
       },
@@ -52,12 +56,20 @@ export function LoginLogProvider({ children }) {
     ]);
   };
 
+  /* =====================================================
+     TEMP FRONTEND LOGOUT
+     ===================================================== */
   const closeLoginLog = () => {
-    setLoginLogs((prev) =>
-      prev.map((l, i) =>
-        i === 0 ? { ...l, logoutTime: new Date().toLocaleString() } : l
-      )
-    );
+    setLoginLogs((prev) => {
+      if (prev.length === 0) return prev;
+
+      const [latest, ...rest] = prev;
+
+      return [
+        { ...latest, logoutTime: new Date().toLocaleString() },
+        ...rest,
+      ];
+    });
   };
 
   return (
@@ -66,7 +78,7 @@ export function LoginLogProvider({ children }) {
         loginLogs,
         addLoginLog,
         closeLoginLog,
-        fetchLoginLogs, // ✅ exposed if needed later
+        fetchLoginLogs,
       }}
     >
       {children}

@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
       setUser(loggedUser);
       localStorage.setItem("user", JSON.stringify(loggedUser));
 
-      // ✅ FRONTEND LOG (kept)
+      // ✅ FRONTEND LOGIN LOG
       addLoginLog({
         username: loggedUser.username,
         role: loggedUser.role,
@@ -51,24 +51,15 @@ export function AuthProvider({ children }) {
   };
 
   /* =====================================================
-     LOGOUT (BACKEND + FRONTEND)
+     LOGOUT (FRONTEND ONLY — TEMP)
      ===================================================== */
-  const logout = async () => {
-    try {
-      if (user?.username) {
-        // ✅ BACKEND LOGOUT (DB UPDATE)
-        await api.post("/auth/logout", null, {
-          params: { username: user.username },
-        });
-      }
-    } catch (err) {
-      console.error("Logout API failed:", err);
-    } finally {
-      // ✅ FRONTEND CLEANUP (ALWAYS)
-      closeLoginLog();
-      setUser(null);
-      localStorage.removeItem("user");
-    }
+  const logout = () => {
+    // ✅ CLOSE FRONTEND LOGIN LOG
+    closeLoginLog();
+
+    // ✅ CLEAR SESSION
+    setUser(null);
+    localStorage.removeItem("user");
   };
 
   return (
