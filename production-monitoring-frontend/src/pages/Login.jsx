@@ -37,6 +37,21 @@ function Login() {
           <p style={styles.welcomeSub}>
             Sign in to monitor production, machines, and operations
           </p>
+          <p style={styles.welcomeSub}>
+  <strong>Demo Credentials</strong>
+</p>
+
+  <p style={styles.welcomeSub}>
+    Admin : admin / admin123
+  </p>
+
+  <p style={styles.welcomeSub}>
+    Supervisor : supervisor / super123
+  </p>
+
+  <p style={styles.welcomeSub}>
+    Operator : operator / oper123
+  </p>
 
           <div style={styles.circleLg} />
           <div style={styles.circleSm} />
@@ -44,7 +59,7 @@ function Login() {
 
         {/* ---------- RIGHT PANEL ---------- */}
         <div style={styles.rightPanel}>
-          <p style={styles.greeting}>Hello 👋</p>
+          {/* <p style={styles.greeting}>Hello 👋</p> */}
           <h3 style={styles.loginTitle}>Login Your Account</h3>
 
           {/* USERNAME */}
