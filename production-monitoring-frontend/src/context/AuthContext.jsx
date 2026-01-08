@@ -14,10 +14,13 @@ export function AuthProvider({ children }) {
      RESTORE SESSION (ON REFRESH)
      ===================================================== */
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
+    // ✅ CHANGED: localStorage → sessionStorage
+    const savedUser = sessionStorage.getItem("user");
+
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+
     setLoading(false);
   }, []);
 
@@ -34,7 +37,9 @@ export function AuthProvider({ children }) {
       const loggedUser = res.data;
 
       setUser(loggedUser);
-      localStorage.setItem("user", JSON.stringify(loggedUser));
+
+      // ✅ CHANGED: localStorage → sessionStorage
+      sessionStorage.setItem("user", JSON.stringify(loggedUser));
 
       // ✅ Frontend login log
       addLoginLog({
@@ -65,7 +70,9 @@ export function AuthProvider({ children }) {
     } finally {
       closeLoginLog();
       setUser(null);
-      localStorage.removeItem("user");
+
+      // ✅ CHANGED: localStorage → sessionStorage
+      sessionStorage.removeItem("user");
     }
   };
 
