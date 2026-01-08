@@ -465,7 +465,7 @@ function Batches() {
               <th>Est. Start</th>
               <th>Est. End</th>
               <th>Operator</th>
-              <th>Action</th>
+              {/*<th>Action</th> */}
             </tr>
           </thead>
           <tbody>
@@ -485,7 +485,7 @@ function Batches() {
                   <td>{b.estimatedStartTime}</td>
                   <td>{b.estimatedEndTime}</td>
                   <td>{b.operator?.username}</td>
-                  <td style={{ display: "flex", gap: "6px" }}>
+                  {/* <td style={{ display: "flex", gap: "6px" }}>
                     <button
                       disabled={disabled}
                       style={
@@ -508,7 +508,7 @@ function Batches() {
                     >
                       🗑 Delete
                     </button>
-                  </td>
+                  </td> */}
                 </tr>
               );
             })}
