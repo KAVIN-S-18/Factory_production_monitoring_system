@@ -42,46 +42,38 @@ function Users() {
   };
 
   /* =====================================================
-     ADD USER
+     ADD USER (GMAIL VALIDATION + ERROR HANDLING)
      ===================================================== */
-  /* =====================================================
-   ADD USER (GMAIL VALIDATION + ERROR HANDLING)
-   ===================================================== */
-const handleAddUser = async () => {
-  if (!username || !password) {
-    alert("All fields required");
-    return;
-  }
+  const handleAddUser = async () => {
+    if (!username || !password) {
+      alert("All fields required");
+      return;
+    }
 
-  // ✅ FRONTEND GMAIL VALIDATION
-  if (!username.endsWith("@gmail.com")) {
-    alert("Username must end with @gmail.com");
-    return;
-  }
+    if (!username.endsWith("@gmail.com")) {
+      alert("Username must end with @gmail.com");
+      return;
+    }
 
-  try {
-    await addUser({
-      username,
-      password,
-      role,
-      active: true,
-    });
+    try {
+      await addUser({
+        username,
+        password,
+        role,
+        active: true,
+      });
 
-    alert("User created successfully");
-
-    setShowForm(false);   // ✅ close ONLY on success
-    setUserPage(0);
-
-  } catch (err) {
-    console.error(err);
-
-    alert(
-      err?.response?.data?.message ||
-      "Failed to create user"
-    );
-  }
-};
-
+      alert("User created successfully");
+      setShowForm(false);
+      setUserPage(0);
+    } catch (err) {
+      console.error(err);
+      alert(
+        err?.response?.data?.message ||
+          "Failed to create user"
+      );
+    }
+  };
 
   /* =====================================================
      UPDATE PASSWORD
@@ -111,54 +103,76 @@ const handleAddUser = async () => {
       </button>
 
       {/* ================= USERS TABLE ================= */}
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th style={{ textAlign: "center" }}>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {pagedUsers.map((u) => (
-            <tr key={u.id}>
-              <td>{u.username}</td>
-              <td>{u.role}</td>
-              <td style={{ textAlign: "center" }}>
-                <button
-                  type="button"
-                  style={styles.secondaryBtn}
-                  onClick={() => {
-                    setEditUser(u);
-                    setNewPassword("");
-                  }}
-                >
-                  Edit Password
-                </button>{" "}
-                <button
-                  type="button"
-                  style={styles.deleteBtn}
-                  onClick={async () => {
-                    await deleteUser(u.id);
-                    setUserPage(0);
-                  }}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-
-          {pagedUsers.length === 0 && (
+      <div style={styles.tableWrap}>
+        <table style={styles.table}>
+          <thead>
             <tr>
-              <td colSpan="3" style={{ textAlign: "center" }}>
-                No users
-              </td>
+              <th style={styles.th}>Username</th>
+              <th style={styles.th}>Role</th>
+              <th
+                style={{
+                  ...styles.th,
+                  borderRight: "none",
+                  textAlign: "center",
+                }}
+              >
+                Actions
+              </th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {pagedUsers.map((u) => (
+              <tr key={u.id}>
+                <td style={styles.td}>{u.username}</td>
+
+                <td style={styles.td}>
+                  <span style={styles.roleBadge(u.role)}>
+                    {u.role}
+                  </span>
+                </td>
+
+                <td
+                  style={{
+                    ...styles.td,
+                    borderRight: "none",
+                    textAlign: "center",
+                  }}
+                >
+                  <button
+                    type="button"
+                    style={styles.secondaryBtn}
+                    onClick={() => {
+                      setEditUser(u);
+                      setNewPassword("");
+                    }}
+                  >
+                    Edit Password
+                  </button>
+                  <button
+                    type="button"
+                    style={styles.deleteBtn}
+                    onClick={async () => {
+                      await deleteUser(u.id);
+                      setUserPage(0);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+
+            {pagedUsers.length === 0 && (
+              <tr>
+                <td colSpan="3" style={{ textAlign: "center" }}>
+                  No users
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* ---------- USERS PAGINATION ---------- */}
       <div style={styles.pagination}>
@@ -189,35 +203,50 @@ const handleAddUser = async () => {
       {/* ================= LOGIN LOGS ================= */}
       <h3 style={{ marginTop: "40px" }}>User Login Logs</h3>
 
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Login Time</th>
-            <th>Logout Time</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {pagedLogs.length === 0 ? (
+      <div style={styles.tableWrap}>
+        <table style={styles.table}>
+          <thead>
             <tr>
-              <td colSpan="4" style={{ textAlign: "center" }}>
-                No login activity
-              </td>
+              <th style={styles.th}>Username</th>
+              <th style={styles.th}>Role</th>
+              <th style={styles.th}>Login Time</th>
+              <th style={{ ...styles.th, borderRight: "none" }}>
+                Logout Time
+              </th>
             </tr>
-          ) : (
-            pagedLogs.map((l) => (
-              <tr key={l.id}>
-                <td>{l.username}</td>
-                <td>{l.role}</td>
-                <td>{l.loginTime}</td>
-                <td>{l.logoutTime || "Active"}</td>
+          </thead>
+
+          <tbody>
+            {pagedLogs.length === 0 ? (
+              <tr>
+                <td colSpan="4" style={{ textAlign: "center" }}>
+                  No login activity
+                </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              pagedLogs.map((l) => (
+                <tr key={l.id}>
+                  <td style={styles.td}>{l.username}</td>
+                  <td style={styles.td}>
+                    <span style={styles.roleBadge(l.role)}>
+                      {l.role}
+                    </span>
+                  </td>
+                  <td style={styles.td}>{l.loginTime}</td>
+                  <td
+                    style={{
+                      ...styles.td,
+                      borderRight: "none",
+                    }}
+                  >
+                    {l.logoutTime || "Active"}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* ---------- LOGIN LOG PAGINATION ---------- */}
       <div style={styles.pagination}>
@@ -346,12 +375,59 @@ const handleAddUser = async () => {
 
 /* ================= STYLES ================= */
 const styles = {
+  tableWrap: {
+    marginTop: "20px",
+    borderRadius: "14px",
+    border: "2px solid #334155",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+    overflow: "hidden",
+    background: "#fff",
+  },
+
   table: {
     width: "100%",
-    borderCollapse: "collapse",
-    marginTop: "20px",
-    border: "2px solid #334155",
+    borderCollapse: "separate",
+    borderSpacing: "0",
   },
+
+  th: {
+    padding: "12px 14px",
+    background: "#f8fafc",
+    color: "#0f172a",
+    fontSize: "13px",
+    fontWeight: "700",
+    borderBottom: "2px solid #334155",
+    borderRight: "2px solid #334155",
+    textAlign: "left",
+  },
+
+  td: {
+    padding: "10px 14px",
+    fontSize: "13px",
+    color: "#334155",
+    borderBottom: "1.5px solid #334155",
+    borderRight: "1.5px solid #334155",
+  },
+
+  roleBadge: (role) => ({
+    padding: "4px 10px",
+    borderRadius: "999px",
+    fontSize: "11px",
+    fontWeight: "700",
+    color:
+      role === "ADMIN"
+        ? "#7c3aed"
+        : role === "SUPERVISOR"
+        ? "#2563eb"
+        : "#166534",
+    background:
+      role === "ADMIN"
+        ? "#ede9fe"
+        : role === "SUPERVISOR"
+        ? "#dbeafe"
+        : "#dcfce7",
+  }),
+
   primaryBtn: {
     padding: "10px 16px",
     background: "#2563eb",
@@ -362,6 +438,7 @@ const styles = {
     marginBottom: "12px",
     fontWeight: "600",
   },
+
   secondaryBtn: {
     padding: "6px 12px",
     background: "#e5e7eb",
@@ -371,6 +448,7 @@ const styles = {
     fontWeight: "600",
     marginRight: "6px",
   },
+
   deleteBtn: {
     padding: "6px 14px",
     borderRadius: "6px",
@@ -379,6 +457,7 @@ const styles = {
     color: "#991b1b",
     cursor: "pointer",
   },
+
   pagination: {
     marginTop: "12px",
     display: "flex",
@@ -386,6 +465,7 @@ const styles = {
     alignItems: "center",
     gap: "12px",
   },
+
   pageBtn: {
     padding: "6px 12px",
     borderRadius: "6px",
@@ -393,6 +473,7 @@ const styles = {
     background: "#f8fafc",
     cursor: "pointer",
   },
+
   modalOverlay: {
     position: "fixed",
     inset: 0,
@@ -403,6 +484,7 @@ const styles = {
     zIndex: 9999,
     pointerEvents: "none",
   },
+
   modal: {
     background: "#fff",
     padding: "20px",
@@ -410,11 +492,13 @@ const styles = {
     width: "420px",
     pointerEvents: "auto",
   },
+
   field: {
     display: "flex",
     flexDirection: "column",
     marginBottom: "12px",
   },
+
   modalActions: {
     display: "flex",
     justifyContent: "flex-end",
@@ -422,7 +506,7 @@ const styles = {
   },
 };
 
-/* ---------- FORCE TABLE GRID ---------- */
+/* ---------- FORCE TABLE GRID (PRESERVED) ---------- */
 const style = document.createElement("style");
 style.innerHTML = `
   table th {
