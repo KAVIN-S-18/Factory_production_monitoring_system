@@ -1,6 +1,7 @@
 package com.project.factory.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,12 @@ public class UserLoginLogService {
         UserLoginLog log = new UserLoginLog();
         log.setUsername(username);
         log.setRole(role);
-        log.setLoginTime(LocalDateTime.now());
+
+        // ✅ FIX: Force IST instead of UTC
+        log.setLoginTime(
+            LocalDateTime.now(ZoneId.of("Asia/Kolkata"))
+        );
+
         log.setActive(true);
 
         repository.save(log);
@@ -40,7 +46,12 @@ public class UserLoginLogService {
 
         if (logOpt.isPresent()) {
             UserLoginLog log = logOpt.get();
-            log.setLogoutTime(LocalDateTime.now());
+
+            // ✅ FIX: Force IST instead of UTC
+            log.setLogoutTime(
+                LocalDateTime.now(ZoneId.of("Asia/Kolkata"))
+            );
+
             log.setActive(false);
             repository.save(log);
         }
