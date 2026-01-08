@@ -73,11 +73,11 @@ function Suppliers() {
     };
 
     // ✅ INCLUDE MATERIALS ONLY WHEN CREATING SUPPLIER
-    if (!editingSupplier) {
-      payload.materials = Array.isArray(newMaterials)
-        ? [...newMaterials]
-        : [];
-    }
+    // if (!editingSupplier) {
+    //   payload.materials = Array.isArray(newMaterials)
+    //     ? [...newMaterials]
+    //     : [];
+    // }
 
     if (editingSupplier) {
       updateSupplier({ ...payload, id: editingSupplier.id });
@@ -242,7 +242,7 @@ function Suppliers() {
             </select>
 
             {/* ===== ADD MATERIALS (CREATE) ===== */}
-            {!editingSupplier && (
+            {/* {!editingSupplier && (
               <>
                 <label>Add Materials</label>
 
@@ -284,7 +284,7 @@ function Suppliers() {
                   ))}
                 </div>
               </>
-            )}
+            )} */}
 
             {/* ===== EDIT MATERIALS ===== */}
             {editingSupplier && (
