@@ -144,10 +144,7 @@ function Suppliers() {
       : safeSuppliers.filter((s) => s.status === statusFilter);
 
   const start = page * PAGE_SIZE;
-  const pagedSuppliers = filteredSuppliers.slice(
-    start,
-    start + PAGE_SIZE
-  );
+  const pagedSuppliers = filteredSuppliers.slice(start, start + PAGE_SIZE);
   /* ================================================= */
 
   return (
@@ -159,54 +156,73 @@ function Suppliers() {
       </button>
 
       {/* ================= SUPPLIER TABLE ================= */}
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Rating</th>
-            <th>Materials</th>
-            <th style={{ textAlign: "center" }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pagedSuppliers.map((s) => (
-            <tr key={s.id}>
-              <td>{s.name}</td>
-              <td>{s.status}</td>
-              <td>{s.rating} ⭐</td>
-              <td>
-                {Array.isArray(s.materials) &&
-                  s.materials.map((m) => (
-                    <span key={m.id} style={styles.tag}>
-                      {m.materialName} (Grade {gradeLabel(m.grade)})
-                    </span>
-                  ))}
-                <button
-                  style={styles.addMiniBtn}
-                  onClick={() => openAddMaterial(s)}
-                >
-                  + Add
-                </button>
-              </td>
-              <td style={{ textAlign: "center" }}>
-                <button
-                  style={styles.editBtn}
-                  onClick={() => openEditSupplier(s)}
-                >
-                  Edit
-                </button>
-                <button
-                  style={styles.deleteBtn}
-                  onClick={() => deleteSupplier(s.id)}
-                >
-                  Delete
-                </button>
-              </td>
+      <div style={styles.tableWrap}>
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>Name</th>
+              <th style={styles.th}>Status</th>
+              <th style={styles.th}>Rating</th>
+              <th style={styles.th}>Materials</th>
+              <th style={{ ...styles.th, borderRight: "none", textAlign: "center" }}>
+                Actions
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {pagedSuppliers.map((s) => (
+              <tr key={s.id}>
+                <td style={styles.td}>{s.name}</td>
+
+                {/* ✅ STATUS WITH COLOR */}
+                <td style={styles.td}>
+                  <span style={styles.statusBadge(s.status)}>
+                    {s.status}
+                  </span>
+                </td>
+
+                <td style={styles.td}>{s.rating} ⭐</td>
+
+                <td style={styles.td}>
+                  {Array.isArray(s.materials) &&
+                    s.materials.map((m) => (
+                      <span key={m.id} style={styles.tag}>
+                        {m.materialName} (Grade {gradeLabel(m.grade)})
+                      </span>
+                    ))}
+                  <button
+                    style={styles.addMiniBtn}
+                    onClick={() => openAddMaterial(s)}
+                  >
+                    + Add
+                  </button>
+                </td>
+
+                <td
+                  style={{
+                    ...styles.td,
+                    borderRight: "none",
+                    textAlign: "center",
+                  }}
+                >
+                  <button
+                    style={styles.editBtn}
+                    onClick={() => openEditSupplier(s)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    style={styles.deleteBtn}
+                    onClick={() => deleteSupplier(s.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* ================= ADD / EDIT SUPPLIER MODAL ================= */}
       {showForm && (
@@ -242,49 +258,7 @@ function Suppliers() {
             </select>
 
             {/* ===== ADD MATERIALS (CREATE) ===== */}
-            {/* {!editingSupplier && (
-              <>
-                <label>Add Materials</label>
-
-                <input
-                  style={styles.input}
-                  placeholder="Material Name"
-                  value={newMaterialName}
-                  onChange={(e) => setNewMaterialName(e.target.value)}
-                />
-
-                <select
-                  style={styles.input}
-                  value={newMaterialGrade}
-                  onChange={(e) => setNewMaterialGrade(e.target.value)}
-                >
-                  <option value={1}>Grade A</option>
-                  <option value={2}>Grade B</option>
-                  <option value={3}>Grade C</option>
-                </select>
-
-                <button
-                  style={styles.addMiniBtn}
-                  onClick={addMaterialToNewSupplier}
-                >
-                  + Add Material
-                </button>
-
-                <div style={styles.tagBox}>
-                  {newMaterials.map((m, i) => (
-                    <span key={i} style={styles.tag}>
-                      {m.materialName} (Grade {gradeLabel(m.grade)})
-                      <span
-                        style={styles.remove}
-                        onClick={() => removeNewMaterial(i)}
-                      >
-                        ✕
-                      </span>
-                    </span>
-                  ))}
-                </div>
-              </>
-            )} */}
+            {/* (intentionally disabled – kept as commented code) */}
 
             {/* ===== EDIT MATERIALS ===== */}
             {editingSupplier && (
@@ -375,12 +349,50 @@ function Suppliers() {
 
 /* ================= STYLES ================= */
 const styles = {
+  tableWrap: {
+    marginTop: "20px",
+    borderRadius: "14px",
+    border: "2px solid #334155",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+    overflow: "hidden",
+    background: "#fff",
+  },
+
   table: {
     width: "100%",
-    borderCollapse: "collapse",
-    border: "2px solid #334155",
-    marginTop: "20px",
+    borderCollapse: "separate",
+    borderSpacing: "0",
   },
+
+  th: {
+    padding: "12px 14px",
+    background: "#f8fafc",
+    color: "#0f172a",
+    fontSize: "13px",
+    fontWeight: "700",
+    borderBottom: "2px solid #334155",
+    borderRight: "2px solid #334155",
+    textAlign: "left",
+  },
+
+  td: {
+    padding: "10px 14px",
+    fontSize: "13px",
+    color: "#334155",
+    borderBottom: "1.5px solid #334155",
+    borderRight: "1.5px solid #334155",
+    verticalAlign: "top",
+  },
+
+  statusBadge: (status) => ({
+    padding: "4px 10px",
+    borderRadius: "999px",
+    fontSize: "11px",
+    fontWeight: "700",
+    color: status === "ACTIVE" ? "#065f46" : "#991b1b",
+    background: status === "ACTIVE" ? "#d1fae5" : "#fee2e2",
+  }),
+
   primaryBtn: {
     padding: "10px 16px",
     background: "#2563eb",
@@ -391,6 +403,7 @@ const styles = {
     cursor: "pointer",
     marginBottom: "12px",
   },
+
   secondaryBtn: {
     padding: "10px 16px",
     background: "#e5e7eb",
@@ -398,6 +411,7 @@ const styles = {
     borderRadius: "8px",
     cursor: "pointer",
   },
+
   editBtn: {
     marginRight: "6px",
     padding: "6px 12px",
@@ -405,6 +419,7 @@ const styles = {
     border: "1px solid #2563eb",
     background: "#eff6ff",
   },
+
   deleteBtn: {
     padding: "6px 12px",
     borderRadius: "6px",
@@ -412,6 +427,7 @@ const styles = {
     background: "#fee2e2",
     color: "#991b1b",
   },
+
   addMiniBtn: {
     marginLeft: "6px",
     padding: "4px 8px",
@@ -420,12 +436,14 @@ const styles = {
     background: "#eff6ff",
     cursor: "pointer",
   },
+
   tagBox: {
     display: "flex",
     flexWrap: "wrap",
     gap: "6px",
     marginBottom: "10px",
   },
+
   tag: {
     display: "inline-flex",
     alignItems: "center",
@@ -434,11 +452,13 @@ const styles = {
     borderRadius: "6px",
     background: "#f1f5f9",
   },
+
   remove: {
     cursor: "pointer",
     color: "#991b1b",
     fontWeight: "bold",
   },
+
   modalOverlay: {
     position: "fixed",
     inset: 0,
@@ -447,12 +467,14 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
   },
+
   modal: {
     background: "#fff",
     padding: "20px",
     borderRadius: "12px",
     width: "420px",
   },
+
   input: {
     width: "100%",
     padding: "10px",
@@ -460,6 +482,7 @@ const styles = {
     borderRadius: "8px",
     border: "1px solid #94a3b8",
   },
+
   modalActions: {
     display: "flex",
     justifyContent: "flex-end",
