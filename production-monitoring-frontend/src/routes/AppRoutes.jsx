@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
@@ -20,7 +20,7 @@ function AppRoutes() {
       {/* ---------- PUBLIC ---------- */}
       <Route path="/login" element={<Login />} />
 
-      {/* ---------- PROTECTED ---------- */}
+      {/* ---------- PROTECTED LAYOUT ---------- */}
       <Route
         element={
           <ProtectedRoute
@@ -30,7 +30,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        {/* ---------- COMMON DASHBOARD ---------- */}
+        {/* ---------- DEFAULT DASHBOARD ---------- */}
         <Route path="/" element={<Dashboard />} />
 
         {/* ---------- OPERATOR ---------- */}
@@ -107,7 +107,13 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
+        {/* ---------- 🔑 CATCH ALL (INSIDE LOGIN) ---------- */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
+
+      {/* ---------- 🔑 GLOBAL FALLBACK ---------- */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }

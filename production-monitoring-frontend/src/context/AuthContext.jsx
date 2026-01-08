@@ -11,7 +11,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   /* =====================================================
-     RESTORE SESSION
+     RESTORE SESSION (ON REFRESH)
      ===================================================== */
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   /* =====================================================
-     LOGIN (BACKEND INTEGRATED)
+     LOGIN
      ===================================================== */
   const login = async (username, password) => {
     try {
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
       setUser(loggedUser);
       localStorage.setItem("user", JSON.stringify(loggedUser));
 
-      // ✅ FRONTEND LOGIN LOG
+      // ✅ Frontend login log
       addLoginLog({
         username: loggedUser.username,
         role: loggedUser.role,
@@ -51,12 +51,11 @@ export function AuthProvider({ children }) {
   };
 
   /* =====================================================
-     LOGOUT (BACKEND + FRONTEND)
+     LOGOUT
      ===================================================== */
   const logout = async () => {
     try {
       if (user?.username) {
-        // ✅ BACKEND LOGOUT (UPDATE DB)
         await api.post("/auth/logout", {
           username: user.username,
         });
@@ -64,7 +63,6 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error("Logout API failed:", err);
     } finally {
-      // ✅ FRONTEND CLEANUP (ALWAYS)
       closeLoginLog();
       setUser(null);
       localStorage.removeItem("user");
