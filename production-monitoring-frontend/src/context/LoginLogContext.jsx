@@ -23,9 +23,13 @@ export function LoginLogProvider({ children }) {
         id: l.id,
         username: l.username,
         role: l.role,
-        loginTime: new Date(l.loginTime).toLocaleString(),
+        loginTime: new Date(l.loginTime).toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata",
+        }),
         logoutTime: l.logoutTime
-          ? new Date(l.logoutTime).toLocaleString()
+          ? new Date(l.logoutTime).toLocaleString("en-IN", {
+              timeZone: "Asia/Kolkata",
+            })
           : null,
       }));
 
@@ -66,7 +70,12 @@ export function LoginLogProvider({ children }) {
       const [latest, ...rest] = prev;
 
       return [
-        { ...latest, logoutTime: new Date().toLocaleString() },
+        {
+          ...latest,
+          logoutTime: new Date().toLocaleString("en-IN", {
+            timeZone: "Asia/Kolkata",
+          }),
+        },
         ...rest,
       ];
     });
