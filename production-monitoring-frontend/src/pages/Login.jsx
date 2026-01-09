@@ -50,7 +50,7 @@ function Login() {
   </p>
 
   <p style={styles.welcomeSub}>
-    Operator : operator@gmail.com / oper123
+    Operator : operator1@gmail.com / oper123
   </p>
 
           <div style={styles.circleLg} />
