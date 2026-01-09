@@ -42,15 +42,15 @@ function Login() {
 </p>
 
   <p style={styles.welcomeSub}>
-    Admin : admin / admin123
+    Admin : admin@gmail.com / admin123
   </p>
 
   <p style={styles.welcomeSub}>
-    Supervisor : supervisor / super123
+    Supervisor : supervisor@gmail.com / super123
   </p>
 
   <p style={styles.welcomeSub}>
-    Operator : operator / oper123
+    Operator : operator@gmail.com / oper123
   </p>
 
           <div style={styles.circleLg} />

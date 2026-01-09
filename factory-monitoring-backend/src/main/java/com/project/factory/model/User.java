@@ -1,6 +1,6 @@
 package com.project.factory.model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -18,7 +18,6 @@ public class User {
     @Column(nullable = false)
     @JsonIgnore
     private String password;
-
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -55,8 +54,8 @@ public class User {
     public String getPassword() {
         return password;
     }
-    
-    // NOTE: plain password for now (we will encrypt later)
+
+    // TEMP: plain password (we will encrypt later)
     public void setPassword(String password) {
         this.password = password;
     }
@@ -65,6 +64,7 @@ public class User {
         return role;
     }
 
+    // ✅ FIXED SETTER
     public void setRole(Role role) {
         this.role = role;
     }
